@@ -2,10 +2,12 @@
 
 A modern, interactive event scheduling application built with React and TypeScript. Manage events across multiple venues with an intuitive weekly time table interface.
 
+🌐 **Live Demo**: [https://event-management-011.netlify.app/](https://event-management-011.netlify.app/)
+
 ## Features
 
 - 📅 **Weekly View**: Navigate through weeks with a tabbed interface showing 7 days
-- 🏢 **Multi-Venue Support**: Manage events across 3 independent venues
+- 🏢 **Multi-Venue Support**: Manage events across 10 independent venues
 - ⏰ **15-Minute Time Slots**: Precise scheduling with 15-minute interval precision
 - 🎨 **Customizable Events**: Color-coded events with customizable colors
 - 💾 **Local Storage**: All data persists in browser localStorage

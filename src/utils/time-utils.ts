@@ -60,11 +60,20 @@ export const formatDate = (date: Dayjs): string => {
 };
 
 export const formatDateDisplay = (date: Dayjs): string => {
-  return date.format('MMM DD');
+  return date.format('YYYY-MM-DD');
 };
 
 export const getDayName = (date: Dayjs): string => {
   return date.format('dddd');
+};
+
+export const formatTimeRange = (startTime: string, endTime: string): string => {
+  const formatTimeWithoutLeadingZero = (time: string): string => {
+    const [hours, minutes] = time.split(':');
+    const hour = parseInt(hours, 10);
+    return `${hour}:${minutes}`;
+  };
+  return `${formatTimeWithoutLeadingZero(startTime)}-${formatTimeWithoutLeadingZero(endTime)}`;
 };
 
 

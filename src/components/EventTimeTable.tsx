@@ -14,6 +14,7 @@ import {
 import {
   formatDate,
   formatTime,
+  formatTimeRange,
   generateTimeSlots,
   getHeightInPixels,
   getTopPosition,
@@ -35,7 +36,7 @@ function EventTimeTable() {
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs().startOf('week').add(1, 'day'));
   const [weekStart, setWeekStart] = useState<Dayjs>(dayjs().startOf('week').add(1, 'day'));
   
-  // Initialize venues from localStorage - 3 independent venues
+  // Initialize venues from localStorage - 10 independent venues
   const [venues] = useState<Venue[]>(() => {
     const storedVenues = getVenuesFromStorage();
     if (storedVenues.length === 0) {
@@ -43,22 +44,29 @@ function EventTimeTable() {
         { id: '1', name: 'Venue 1' },
         { id: '2', name: 'Venue 2' },
         { id: '3', name: 'Venue 3' },
+        { id: '4', name: 'Venue 4' },
+        { id: '5', name: 'Venue 5' },
+        { id: '6', name: 'Venue 6' },
+        { id: '7', name: 'Venue 7' },
+        { id: '8', name: 'Venue 8' },
+        { id: '9', name: 'Venue 9' },
+        { id: '10', name: 'Venue 10' },
       ];
       saveVenuesToStorage(defaultVenues);
       return defaultVenues;
     }
-    // Ensure we have at least 3 venues, but limit to 3
-    if (storedVenues.length < 3) {
+    // Ensure we have at least 10 venues, but limit to 10
+    if (storedVenues.length < 10) {
       const additionalVenues: Venue[] = [];
-      for (let i = storedVenues.length + 1; i <= 3; i++) {
+      for (let i = storedVenues.length + 1; i <= 10; i++) {
         additionalVenues.push({ id: i.toString(), name: `Venue ${i}` });
       }
       const updatedVenues = [...storedVenues, ...additionalVenues];
       saveVenuesToStorage(updatedVenues);
       return updatedVenues;
     }
-    // Limit to 3 venues if more exist
-    return storedVenues.slice(0, 3);
+    // Limit to 10 venues if more exist
+    return storedVenues.slice(0, 10);
   });
 
   // Initialize events from localStorage - make it reactive
@@ -112,7 +120,7 @@ function EventTimeTable() {
     return isDateInWeek ? currentSelectedDate : newWeekDates[0];
   };
 
-  // Sync scroll between time column and content area
+  // Sync vertical scroll between time column and content area
   useEffect(() => {
     const timeColumn = timeColumnRef.current;
     const contentArea = contentAreaRef.current;
@@ -132,6 +140,34 @@ function EventTimeTable() {
 
     return () => {
       timeColumn.removeEventListener('scroll', handleTimeScroll);
+      contentArea.removeEventListener('scroll', handleContentScroll);
+    };
+  }, []);
+
+  // Sync horizontal scroll between venue header bar and venue columns grid
+  useEffect(() => {
+    const venuesBar = venuesScrollRef.current;
+    const contentArea = contentAreaRef.current;
+
+    if (!venuesBar || !contentArea) return;
+
+    const handleVenuesScroll = () => {
+      if (contentArea.scrollLeft !== venuesBar.scrollLeft) {
+        contentArea.scrollLeft = venuesBar.scrollLeft;
+      }
+    };
+
+    const handleContentScroll = () => {
+      if (venuesBar.scrollLeft !== contentArea.scrollLeft) {
+        venuesBar.scrollLeft = contentArea.scrollLeft;
+      }
+    };
+
+    venuesBar.addEventListener('scroll', handleVenuesScroll);
+    contentArea.addEventListener('scroll', handleContentScroll);
+
+    return () => {
+      venuesBar.removeEventListener('scroll', handleVenuesScroll);
       contentArea.removeEventListener('scroll', handleContentScroll);
     };
   }, []);
@@ -352,14 +388,14 @@ function EventTimeTable() {
                             trigger={['contextMenu']}
                           >
                             <div
-                              className="absolute rounded-md shadow-sm border border-white/30 p-2 text-white text-xs overflow-hidden cursor-pointer hover:shadow-lg transition-all group"
+                              className="absolute rounded-md shadow-sm border border-white/30 p-2 text-white text-xs overflow-hidden cursor-pointer hover:shadow-lg transition-all group text-center"
                               style={style}
                               onClick={(e) => handleEventClick(event, e)}
                               title={`${event.title} (${event.date} ${event.startTime} - ${event.endTime})`}
                             >
                               <div className="font-semibold truncate">{event.title}</div>
                               <div className="text-xs opacity-90 mt-0.5">
-                                {event.date} {event.startTime} - {event.endTime}
+                                {formatTimeRange(event.startTime, event.endTime)}
                               </div>
                             </div>
                           </Dropdown>
